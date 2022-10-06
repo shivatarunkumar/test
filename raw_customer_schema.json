@@ -1,0 +1,103 @@
+{ 
+	"schema": [
+      {
+        "mode": "NULLABLE",
+        "name": "date_of_incorporation",
+        "type": "DATE"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "customer_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "created_by",
+        "type": "STRING"
+      },
+      {
+        "description": "bq-datetime",
+        "mode": "NULLABLE",
+        "name": "created_timestamp",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "org_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "status",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "business_name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "customer_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "expected_turnover",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "message_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "company_registration_number",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contact_details",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "business_address",
+        "type": "STRING"
+      },
+      {
+        "description": "%E4Y-%m-%d",
+        "mode": "NULLABLE",
+        "name": "business_start_date",
+        "type": "DATE"
+      },
+      {
+        "description": "bq-datetime",
+        "mode": "NULLABLE",
+        "name": "last_modified_timestamp",
+        "type": "TIMESTAMP"
+      },
+      {
+        "description": "bq-datetime",
+        "mode": "NULLABLE",
+        "name": "emh_processing_timestamp",
+        "type": "TIMESTAMP"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "country_of_incorporation",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "number_of_employees",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "last_modified_by",
+        "type": "STRING"
+      }
+    ]
+  }
