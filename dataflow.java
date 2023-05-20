@@ -1,33 +1,16 @@
 import com.google.api.services.dataflow.Dataflow;
 import com.google.api.services.dataflow.model.Job;
 import com.google.api.services.dataflow.model.JobMetrics;
-import com.google.api.services.dataflow.DataflowScopes;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.auth.oauth2.AccessToken;
-
-import java.io.FileInputStream;
-import java.util.Collections;
 
 public class DataflowJobStatus {
     public static void main(String[] args) throws Exception {
         String projectId = "your-project-id";
         String jobId = "bq-to-spanner";
 
-        // Provide the path to your service account key JSON file
-        String serviceAccountKeyPath = "path/to/service-account-key.json";
-
-        // Authenticate using service account credentials
-        GoogleCredentials credentials = ServiceAccountCredentials.fromStream(new FileInputStream(serviceAccountKeyPath))
-                .createScoped(Collections.singletonList(DataflowScopes.CLOUD_PLATFORM));
-
-        // Get an access token for the Dataflow service
-        AccessToken accessToken = credentials.refreshAccessToken();
-        credentials = credentials.createScoped(Collections.singletonList(DataflowScopes.CLOUD_PLATFORM));
-
-        Dataflow dataflowService = new Dataflow.Builder(credentials.getTransport(), credentials.getJsonFactory())
-                .setApplicationName("Your Dataflow Application")
-                .build();
+        Dataflow dataflowService = DataflowServiceOptions.newBuilder()
+                .setProjectId(projectId)
+                .build()
+                .getService();
 
         // Get the job details
         Job job = dataflowService.projects().jobs().get(projectId, jobId).execute();
