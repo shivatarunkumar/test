@@ -1,0 +1,46 @@
+import com.google.api.services.dataflow.Dataflow;
+import com.google.api.services.dataflow.model.Job;
+import com.google.auth.Credentials;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
+
+import java.io.IOException;
+
+public class DataflowJobDetailsExample {
+    public static void main(String[] args) {
+        // Replace with your project ID
+        String projectId = "your-project-id";
+        // Replace with your Dataflow job name
+        String jobName = "bq-tospanner";
+
+        try {
+            // Create a Dataflow client with default application credentials
+            Dataflow dataflow = createDataflowClient();
+
+            // Get the job details
+            Dataflow.Projects.Jobs.Get jobGetRequest = dataflow.projects().jobs().get(projectId, jobName);
+            Job job = jobGetRequest.execute();
+
+            // Print the job details
+            System.out.println("Job ID: " + job.getId());
+            System.out.println("Job Name: " + job.getName());
+            System.out.println("Job State: " + job.getCurrentState());
+            // Add more job details as needed
+
+        } catch (IOException e) {
+            System.err.println("Error retrieving job details: " + e.getMessage());
+        }
+    }
+
+    private static Dataflow createDataflowClient() throws IOException {
+        Credentials credentials = GoogleCredentials.getApplicationDefault()
+                .createScoped(DataflowScopes.all());
+
+        return new Dataflow.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(),
+                JacksonFactory.getDefaultInstance(),
+                new HttpCredentialsAdapter(credentials))
+                .setApplicationName("DataflowJobDetailsExample")
+                .build();
+    }
+}
