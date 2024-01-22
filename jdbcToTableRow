@@ -1,0 +1,67 @@
+import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
+import org.apache.beam.runners.dataflow.DataflowPipelineRunner;
+import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.io.jdbc.JdbcIO;
+import org.apache.beam.sdk.io.jdbc.JdbcIO.RowMapper;
+import org.apache.beam.sdk.io.jdbc.JdbcIO.TypedRead;
+import org.apache.beam.sdk.options.PipelineOptionsFactory;
+import org.apache.beam.sdk.schemas.Schema;
+import org.apache.beam.sdk.transforms.MapElements;
+import org.apache.beam.sdk.transforms.SimpleFunction;
+import org.apache.beam.sdk.values.TypeDescriptor;
+import org.apache.beam.sdk.values.TypeDescriptor.TypeVariableToken;
+import org.apache.beam.sdk.values.TypeDescriptors;
+import org.apache.beam.sdk.values.TypeParameter;
+
+public class JdbcToTableRow {
+
+    public interface Options extends DataflowPipelineOptions {
+        // Add any additional pipeline options as needed
+    }
+
+    public static void main(String[] args) {
+        Options options = PipelineOptionsFactory.fromArgs(args).withValidation().as(Options.class);
+        options.setRunner(DataflowPipelineRunner.class);
+
+        Pipeline pipeline = Pipeline.create(options);
+
+        TypedRead<TableRow> typedRead = JdbcIO.<TableRow>read()
+                .withDataSourceConfiguration(
+                        JdbcIO.DataSourceConfiguration.create()
+                                .withUrl("jdbc:mysql://your-mysql-host:3306/your-database")
+                                .withDriverClassName("com.mysql.cj.jdbc.Driver")
+                                .withUsername("your-username")
+                                .withPassword("your-password"))
+                .withQuery("SELECT * FROM your_table")
+                .withCoder(TypeDescriptor.of(TableRow.class))
+                .withRowMapper(JdbcToTableRow::mapRow);
+
+        pipeline.apply("ReadFromJdbc", typedRead)
+                .apply("YourTransform", /* Your Transform */)
+                .apply("WriteToBigQuery", /* Your BigQuery Write Transform */);
+
+        pipeline.run();
+    }
+
+    // Map JDBC ResultSet to TableRow
+    static TableRow mapRow(java.sql.ResultSet resultSet) throws Exception {
+        TableRow row = new TableRow();
+        Schema schema = JdbcToTableRow.getSchema();
+
+        for (int i = 0; i < schema.getFieldCount(); i++) {
+            String fieldName = schema.getField(i).getName();
+            row.set(fieldName, resultSet.getObject(fieldName));
+        }
+
+        return row;
+    }
+
+    // Define schema for TableRow
+    static Schema getSchema() {
+        return Schema.builder()
+                .addInt32Field("id")
+                .addStringField("name")
+                // Add more fields as needed
+                .build();
+    }
+}
