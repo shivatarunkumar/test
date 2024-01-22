@@ -3,9 +3,54 @@ from faker import Faker
 
 fake = Faker()
 
+def generate_mysql_create_table(json_schema, table_name):
+    columns = []
+
+    for column in json_schema:
+        column_name = column["name"]
+        column_type = column["type"].upper()
+
+        # Map BigQuery types to MySQL types
+        if column_type == "INTEGER":
+            mysql_type = "INT"
+        elif column_type == "STRING":
+            mysql_type = "VARCHAR(255)"  # Adjust the length as needed
+        else:
+            # Add more type mappings as needed
+            mysql_type = column_type
+
+        columns.append(f"{column_name} {mysql_type}")
+
+    # Create the MySQL CREATE TABLE statement
+    create_table_statement = f"CREATE TABLE {table_name} (\n\t{',\n\t'.join(columns)}\n);"
+
+    return create_table_statement
+
+def generate_mysql_insert_statements(json_schema, table_name, sample_records):
+    insert_statements = []
+
+    for record in sample_records:
+        columns = []
+        values = []
+
+        for column in json_schema:
+            column_name = column["name"]
+            columns.append(column_name)
+
+            value = record.get(column_name, "NULL")
+            if isinstance(value, str):
+                value = f"'{value}'"
+
+            values.append(str(value))
+
+        insert_statement = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(values)});"
+        insert_statements.append(insert_statement)
+
+    return insert_statements
+
 def generate_random_sample_records(schema, num_records):
     sample_records = []
-    
+
     for _ in range(num_records):
         record = {}
         for column in schema:
@@ -15,9 +60,9 @@ def generate_random_sample_records(schema, num_records):
             elif column["type"].lower() == "string":
                 record[column_name] = fake.first_name()
             # Add more type handling as needed
-            
+
         sample_records.append(record)
-    
+
     return sample_records
 
 # Your JSON schema
