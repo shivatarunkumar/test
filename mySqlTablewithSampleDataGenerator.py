@@ -15,9 +15,18 @@ def generate_mysql_create_table(json_schema, table_name):
             mysql_type = "INT"
         elif column_type == "STRING":
             mysql_type = "VARCHAR(255)"  # Adjust the length as needed
+        elif column_type == "FLOAT":
+            mysql_type = "FLOAT"
+        elif column_type == "BOOLEAN":
+            mysql_type = "BOOLEAN"
+        elif column_type == "TIMESTAMP":
+            mysql_type = "DATETIME"  # Adjust if necessary
+        elif column_type == "DATE":
+            mysql_type = "DATE"
+        # Add more type mappings as needed
         else:
-            # Add more type mappings as needed
-            mysql_type = column_type
+            # Default to VARCHAR for unsupported types
+            mysql_type = "VARCHAR(255)"
 
         columns.append(f"{column_name} {mysql_type}")
 
@@ -38,8 +47,34 @@ def generate_mysql_insert_statements(json_schema, table_name, sample_records):
             columns.append(column_name)
 
             value = record.get(column_name, "NULL")
-            if isinstance(value, str):
-                value = f"'{value}'"
+
+            # Handle boolean values
+            if column["type"].lower() == "boolean":
+                if isinstance(value, bool):
+                    value = str(value).upper()
+                else:
+                    value = "NULL"
+
+            # Handle string and timestamp values
+            elif column["type"].lower() in ["string", "timestamp", "date"]:
+                if isinstance(value, str):
+                    value = f"'{value}'"
+                else:
+                    value = "NULL"
+
+            # Handle float values
+            elif column["type"].lower() == "float":
+                if isinstance(value, (int, float)):
+                    value = str(value)
+                else:
+                    value = "NULL"
+
+            # Handle integer values
+            elif column["type"].lower() == "integer":
+                if isinstance(value, int):
+                    value = str(value)
+                else:
+                    value = "NULL"
 
             values.append(str(value))
 
@@ -59,6 +94,14 @@ def generate_random_sample_records(schema, num_records):
                 record[column_name] = fake.random_int(min=1, max=1000)
             elif column["type"].lower() == "string":
                 record[column_name] = fake.first_name()
+            elif column["type"].lower() == "boolean":
+                record[column_name] = fake.boolean()
+            elif column["type"].lower() == "float":
+                record[column_name] = fake.random_float(min=1.0, max=1000.0)
+            elif column["type"].lower() == "timestamp":
+                record[column_name] = fake.date_time_this_decade()
+            elif column["type"].lower() == "date":
+                record[column_name] = fake.date_this_decade()
             # Add more type handling as needed
 
         sample_records.append(record)
@@ -68,7 +111,11 @@ def generate_random_sample_records(schema, num_records):
 # Your JSON schema
 json_schema = [
     {"name": "oid", "type": "INTEGER"},
-    {"name": "firstname", "type": "STRING"}
+    {"name": "firstname", "type": "STRING"},
+    {"name": "is_active", "type": "BOOLEAN"},
+    {"name": "price", "type": "FLOAT"},
+    {"name": "registration_date", "type": "TIMESTAMP"},
+    {"name": "birth_date", "type": "DATE"}
 ]
 
 # Specify your desired table name
