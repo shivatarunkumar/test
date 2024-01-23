@@ -1,3 +1,6 @@
 # test
 
 -Djavax.net.ssl.trustStore=/path/to/your/truststore -Djavax.net.ssl.trustStorePassword=yourTruststorePassword -Djavax.net.ssl.trustStoreType=yourTruststoreType -Dcom.sun.net.ssl.checkRevocation=false
+
+
+keytool -import -trustcacerts -keystore /path/to/custom-truststore.jks -storepass yourTruststorePassword -noprompt -alias yourAlias -file /path/to/yourCertificate.crt
