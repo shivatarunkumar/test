@@ -6,3 +6,4 @@
 keytool -import -trustcacerts -keystore /path/to/custom-truststore.jks -storepass yourTruststorePassword -noprompt -alias yourAlias -file /path/to/yourCertificate.crt
 
 -Dhttps.cipherSuites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+mvn clean install -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true
