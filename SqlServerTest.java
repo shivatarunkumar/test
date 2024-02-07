@@ -7,6 +7,15 @@ import java.sql.Statement;
 public class SQLServerExample {
 
     public static void main(String[] args) {
+
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Failed to load SQL Server JDBC driver.");
+            e.printStackTrace();
+            return;
+        }
+        
         // JDBC URL for SQL Server
         String jdbcUrl = "jdbc:sqlserver://your_server:1433;databaseName=your_database";
         String username = "your_username";
