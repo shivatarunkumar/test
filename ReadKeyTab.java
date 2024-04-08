@@ -1,41 +1,35 @@
-import sun.security.krb5.EncryptionKey;
-import sun.security.krb5.KerberosKey;
-import sun.security.krb5.internal.ktab.KeyTab;
-import sun.security.krb5.internal.ktab.KeyTabEntry;
-import sun.security.krb5.internal.ktab.KeyTabInputStream;
+import org.apache.kerby.kerberos.kerb.keytab.Keytab;
+import org.apache.kerby.kerberos.kerb.keytab.KeytabEntry;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class ReadKeytabFile {
     public static void main(String[] args) {
         String keytabFilePath = "path/to/your/keytab/file.keytab";
         try {
-            // Open the keytab file
-            File keytabFile = new File(keytabFilePath);
-            FileInputStream inputStream = new FileInputStream(keytabFile);
-            KeyTabInputStream keyTabInputStream = new KeyTabInputStream(inputStream);
-
-            // Read entries from the keytab file
-            KeyTab keytab = KeyTab.getInstance(keytabFile);
-            KeyTabEntry[] keytabEntries = keytab.getEntries();
+            // Read the keytab file
+            Keytab keytab = Keytab.loadKeytab(new File(keytabFilePath));
 
             // Print each entry
-            for (KeyTabEntry entry : keytabEntries) {
-                System.out.println("Principal: " + entry.getService().getName());
-                System.out.println("Key version number: " + entry.getKey().getKeyVersionNumber());
-                EncryptionKey encryptionKey = entry.getKey();
-                System.out.println("Encryption type: " + encryptionKey.getEType());
-                System.out.println("Key bytes: " + encryptionKey.getBytes());
+            for (KeytabEntry entry : keytab.getKeytabEntries()) {
+                System.out.println("Principal: " + entry.getPrincipalName());
+                System.out.println("Key version: " + entry.getKeyVersion());
+                System.out.println("Key type: " + entry.getKey().getKeyType().toString());
+                System.out.println("Key bytes: " + entry.getKey().getKeyData().toString());
                 System.out.println();
             }
-
-            // Close the input streams
-            keyTabInputStream.close();
-            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
+
+/*
+<dependency>
+    <groupId>org.apache.kerby</groupId>
+    <artifactId>kerby-asn1</artifactId>
+    <version>2.0.1</version>
+</dependency>
+
+*/
