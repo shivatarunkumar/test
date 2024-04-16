@@ -1,0 +1,13 @@
+FROM <base_image>
+
+# Install Kerberos client packages
+RUN apt-get update && \
+    apt-get install -y krb5-user
+
+# Copy any necessary Kerberos configuration files (like krb5.conf) if needed
+COPY krb5.conf /etc/krb5.conf
+
+# Set up any environment variables required for Kerberos authentication
+
+# Set the entry point for your container
+CMD ["bash"]
