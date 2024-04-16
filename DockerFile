@@ -11,3 +11,6 @@ COPY krb5.conf /etc/krb5.conf
 
 # Set the entry point for your container
 CMD ["bash"]
+
+# kinit -k -t /path/to/keytab username@REALM
+# klist
