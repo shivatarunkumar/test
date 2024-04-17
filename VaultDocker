@@ -1,0 +1,21 @@
+FROM alpine:latest
+
+# Install necessary dependencies
+RUN apk add --no-cache curl jq
+
+# Install Vault CLI (adjust version as needed)
+RUN apk add --no-cache gnupg && \
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --import && \
+    curl -fsSL https://releases.hashicorp.com/vault/1.9.1/vault_1.9.1_linux_amd64.zip -o vault.zip && \
+    unzip vault.zip && \
+    mv vault /usr/local/bin/vault && \
+    rm vault.zip
+
+# Copy your script or commands into the container
+COPY myscript.sh /usr/local/bin/myscript.sh
+
+# Set execution permissions on the script
+RUN chmod +x /usr/local/bin/myscript.sh
+
+# Your entrypoint or command
+CMD ["myscript.sh"]
